@@ -1,9 +1,4 @@
 import { useState } from "react";
-import BottomWarning from "./helper/BottomWarning";
-import Button from "./helper/Button";
-import Heading from "./helper/Heading";
-import InputBox from "./helper/InputBox";
-import SubHeading from "./helper/SubHeading";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { baseURL } from "../helper";
@@ -86,69 +81,160 @@ const SignUp = () => {
   };
 
   return (
-    <div className="bg-slate-300 h-screen flex justify-center">
-      <div className="flex flex-col justify-center">
-        <div className="rounded-lg bg-white w-100 text-center p-2 h-max px-4">
-          <Heading label={"Sign Up"} />
-          <SubHeading label={"Enter your information to create an account"} />
-          <InputBox
-            placeholder={"John"}
-            label={"First Name"}
-            name={"firstName"}
-            value={signupData.firstName}
-            onChange={handleChange}
-            type={"text"}
-            disabled={loading}
-          />
-          <InputBox
-            placeholder={"Doe"}
-            label={"Last Name"}
-            name={"lastName"}
-            value={signupData.lastName}
-            onChange={handleChange}
-            type={"text"}
-            disabled={loading}
-          />
-          <InputBox
-            placeholder={"johndoe@gmail.com"}
-            label={"Email"}
-            name={"username"}
-            value={signupData.username}
-            onChange={handleChange}
-            type={"email"}
-            disabled={loading}
-          />
-          <InputBox
-            placeholder={"123456"}
-            label={"Password"}
-            name={"password"}
-            value={signupData.password}
-            onChange={handleChange}
-            type={"password"}
-            disabled={loading}
-          />
-          <InputBox
-            placeholder={"9876543210"}
-            label={"Phone Number"}
-            name={"phone"}
-            value={signupData.phone}
-            onChange={handleChange}
-            type={"text"}
-            disabled={loading}
-          />
-          <div className="pt-4">
-            <Button
-              label={loading ? "Signing Up..." : "Sign Up"}
-              onClick={handleSignUp}
-              disabled={loading}
-              loading={loading}
-            />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-2xl p-8">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full mb-4">
+              <svg
+                className="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Create Account
+            </h2>
+            <p className="text-gray-600 mt-2">
+              Join us to start managing your payments
+            </p>
           </div>
-          <BottomWarning
-            label={"Already have an account?"}
-            buttonText={"Sign In"}
-            to={"/signin"}
-          />
+
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={signupData.firstName}
+                  onChange={handleChange}
+                  placeholder="John"
+                  disabled={loading}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={signupData.lastName}
+                  onChange={handleChange}
+                  placeholder="Doe"
+                  disabled={loading}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                name="username"
+                value={signupData.username}
+                onChange={handleChange}
+                placeholder="johndoe@gmail.com"
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number
+              </label>
+              <input
+                type="text"
+                name="phone"
+                value={signupData.phone}
+                onChange={handleChange}
+                placeholder="9876543210"
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={signupData.password}
+                onChange={handleChange}
+                placeholder="Create a strong password"
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </div>
+
+            <div className="mt-6">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full py-3 px-4 rounded-lg font-semibold transition-all ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transform hover:scale-105 cursor-pointer"
+                }`}
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Creating Account...
+                  </span>
+                ) : (
+                  "Sign Up"
+                )}
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              Already have an account?{" "}
+              <a
+                href="/signin"
+                className="text-blue-600 hover:text-blue-700 font-semibold"
+              >
+                Sign In
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

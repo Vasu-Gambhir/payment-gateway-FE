@@ -4,6 +4,7 @@ import Dashboard from "./components/Dashboard";
 import Send from "./components/Send";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import TransactionHistory from "./components/TransactionHistory";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
@@ -29,6 +30,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Send />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <ProtectedRoute>
+                <TransactionHistory />
               </ProtectedRoute>
             }
           />

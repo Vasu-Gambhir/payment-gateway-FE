@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [balance, setBalance] = useState(0);
+  const [loading, setLoading] = useState(true);
+  
   const fetchBalance = async () => {
     try {
       const headers = getHeaders(localStorage.getItem("token"));
@@ -18,9 +20,11 @@ const Dashboard = () => {
       }
 
       setBalance(parseFloat(response.data.balance.toFixed(2)));
-      toast.success("balance fetched successfully");
     } catch (error) {
       console.log("Error while fetching balance", error);
+      toast.error("Error fetching balance");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -29,11 +33,13 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Appbar />
-      <div className="m-8">
-        <Balance value={balance} />
-        <Users />
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          <Balance value={balance} loading={loading} />
+          <Users />
+        </div>
       </div>
     </div>
   );
