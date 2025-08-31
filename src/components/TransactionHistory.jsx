@@ -100,14 +100,14 @@ const TransactionHistory = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Appbar />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
-              <h1 className="text-3xl font-bold text-white">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 sm:p-6">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">
                 Transaction History
               </h1>
-              <p className="text-blue-100 mt-2">
+              <p className="text-blue-100 mt-1 sm:mt-2 text-sm sm:text-base">
                 View all your incoming and outgoing transactions
               </p>
             </div>
@@ -141,12 +141,12 @@ const TransactionHistory = () => {
                 {transactions.map((transaction) => (
                   <div
                     key={transaction._id}
-                    className="p-6 hover:bg-gray-50 transition-all duration-200"
+                    className="p-4 sm:p-6 hover:bg-gray-50 transition-all duration-200"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="flex items-start sm:items-center space-x-3 sm:space-x-4">
                         <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                          className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
                             transaction.type === "sent"
                               ? "bg-red-100"
                               : "bg-green-100"
@@ -154,7 +154,7 @@ const TransactionHistory = () => {
                         >
                           {transaction.type === "sent" ? (
                             <svg
-                              className="w-6 h-6 text-red-600"
+                              className="w-5 h-5 sm:w-6 sm:h-6 text-red-600"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -168,7 +168,7 @@ const TransactionHistory = () => {
                             </svg>
                           ) : (
                             <svg
-                              className="w-6 h-6 text-green-600"
+                              className="w-5 h-5 sm:w-6 sm:h-6 text-green-600"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -182,14 +182,14 @@ const TransactionHistory = () => {
                             </svg>
                           )}
                         </div>
-                        <div>
-                          <p className="font-semibold text-gray-900">
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-900 text-sm sm:text-base">
                             {transaction.type === "sent" ? "Sent to" : "Received from"}{" "}
                             {transaction.type === "sent"
                               ? getDisplayName(transaction.toUserId, transaction.toUserId.phone)
                               : getDisplayName(transaction.fromUserId, transaction.fromUserId.phone)}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-xs sm:text-sm text-gray-500">
                             {transaction.type === "sent"
                               ? transaction.toUserId.phone
                               : transaction.fromUserId.phone}
@@ -199,9 +199,9 @@ const TransactionHistory = () => {
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right sm:text-right ml-13 sm:ml-0">
                         <p
-                          className={`text-xl font-bold ${
+                          className={`text-lg sm:text-xl font-bold ${
                             transaction.type === "sent"
                               ? "text-red-600"
                               : "text-green-600"

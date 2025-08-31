@@ -147,18 +147,18 @@ const Users = () => {
     <div className="mt-8">
       <ContactUpload onUploadSuccess={handleUploadSuccess} />
 
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             My Contacts
           </h2>
-          <div className="flex items-center space-x-3">
-            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
               {contactStats.all} total contacts
             </span>
             <button
               onClick={() => setShowAddContactModal(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer flex items-center space-x-2"
+              className="px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer flex items-center space-x-2 text-sm sm:text-base w-full sm:w-auto justify-center"
             >
               <svg
                 className="w-4 h-4"
@@ -203,16 +203,16 @@ const Users = () => {
           </div>
 
           {/* Status Filter Buttons */}
-          <div className="flex space-x-2">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
             <button
               onClick={() => setStatusFilter("all")}
-              className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 cursor-pointer ${
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center sm:justify-start space-x-2 cursor-pointer text-sm sm:text-base ${
                 statusFilter === "all"
                   ? "bg-blue-600 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
-              <span>All Contacts</span>
+              <span>All</span>
               <span
                 className={`px-2 py-0.5 rounded-full text-xs ${
                   statusFilter === "all" ? "bg-blue-500" : "bg-gray-400"
@@ -223,7 +223,7 @@ const Users = () => {
             </button>
             <button
               onClick={() => setStatusFilter("registered")}
-              className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 cursor-pointer ${
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center sm:justify-start space-x-2 cursor-pointer text-sm sm:text-base ${
                 statusFilter === "registered"
                   ? "bg-green-600 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -241,7 +241,8 @@ const Users = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                <span>Registered</span>
+                <span className="hidden sm:inline">Registered</span>
+                <span className="sm:hidden">Active</span>
               </div>
               <span
                 className={`px-2 py-0.5 rounded-full text-xs ${
@@ -253,7 +254,7 @@ const Users = () => {
             </button>
             <button
               onClick={() => setStatusFilter("invitable")}
-              className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 cursor-pointer ${
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center sm:justify-start space-x-2 cursor-pointer text-sm sm:text-base ${
                 statusFilter === "invitable"
                   ? "bg-orange-600 text-white"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -273,7 +274,8 @@ const Users = () => {
                     d="M12 4v16m8-8H4"
                   />
                 </svg>
-                <span>Can Invite</span>
+                <span className="hidden sm:inline">Can Invite</span>
+                <span className="sm:hidden">Invite</span>
               </div>
               <span
                 className={`px-2 py-0.5 rounded-full text-xs ${
@@ -296,17 +298,17 @@ const Users = () => {
               contacts.map((contact, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 gap-3"
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg flex-shrink-0">
                       {contact.firstName.charAt(0).toUpperCase()}
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">
+                    <div className="flex-1 sm:flex-none">
+                      <p className="font-semibold text-gray-900 text-sm sm:text-base">
                         {contact.firstName} {contact.lastName}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs sm:text-sm text-gray-500">
                         {contact.phoneNumber}
                       </p>
                       {contact.isRegistered && (
@@ -327,18 +329,18 @@ const Users = () => {
                       )}
                     </div>
                   </div>
-                  <div>
+                  <div className="w-full sm:w-auto">
                     {contact.isRegistered ? (
                       <button
                         onClick={() => handleSendMoney(contact)}
-                        className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium cursor-pointer"
+                        className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium cursor-pointer text-sm sm:text-base"
                       >
                         Send Money
                       </button>
                     ) : (
                       <button
                         onClick={() => handleInvite(contact)}
-                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all font-medium cursor-pointer"
+                        className="w-full sm:w-auto px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all font-medium cursor-pointer text-sm sm:text-base"
                       >
                         Invite
                       </button>
