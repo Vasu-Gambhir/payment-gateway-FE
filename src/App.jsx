@@ -7,6 +7,7 @@ import SignUp from "./components/SignUp";
 import TransactionHistory from "./components/TransactionHistory";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuthRoute from "./components/AuthRoute";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
@@ -15,8 +16,22 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Navigate to="/signup" />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route
+            path="/signin"
+            element={
+              <AuthRoute>
+                <SignIn />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <AuthRoute>
+                <SignUp />
+              </AuthRoute>
+            }
+          />
           <Route
             path="/dashboard"
             element={
