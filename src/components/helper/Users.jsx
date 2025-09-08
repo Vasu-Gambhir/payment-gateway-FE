@@ -4,6 +4,7 @@ import { baseURL, getHeaders } from "../../helper";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import ContactUpload from "./ContactUpload";
+import Avatar from "./Avatar";
 
 const Users = () => {
   const [contacts, setContacts] = useState([]);
@@ -19,6 +20,7 @@ const Users = () => {
     registered: 0,
     invitable: 0,
   });
+  const [allContacts, setAllContacts] = useState([]);  // Store all contacts for filtering
   const [isLoading, setIsLoading] = useState(false);
   const [isAddingContact, setIsAddingContact] = useState(false);
   const [newContact, setNewContact] = useState({
@@ -35,6 +37,52 @@ const Users = () => {
     return () => clearTimeout(handler);
   }, [filter]);
 
+  // Function to calculate filtered stats
+  const calculateFilteredStats = (contactList, searchFilter) => {
+    if (!contactList || contactList.length === 0) {
+      return { all: 0, registered: 0, invitable: 0 };
+    }
+
+    // Apply name filter
+    let filteredContacts = contactList;
+    if (searchFilter && searchFilter.trim()) {
+      const lowerFilter = searchFilter.toLowerCase();
+      filteredContacts = contactList.filter(
+        (contact) =>
+          contact.firstName.toLowerCase().includes(lowerFilter) ||
+          contact.lastName.toLowerCase().includes(lowerFilter) ||
+          contact.phoneNumber.includes(searchFilter)
+      );
+    }
+
+    // Calculate stats
+    const all = filteredContacts.length;
+    const registered = filteredContacts.filter(contact => contact.isRegistered).length;
+    const invitable = filteredContacts.filter(contact => !contact.isRegistered).length;
+
+    return { all, registered, invitable };
+  };
+
+  // Fetch all contacts for filtering (without pagination)
+  const fetchAllContacts = async () => {
+    try {
+      const headers = getHeaders(localStorage.getItem("token"));
+      const response = await axios.get(
+        `${baseURL}/users/contacts?filter=&statusFilter=all&page=1&limit=10000`, // Get all contacts
+        headers
+      );
+      
+      if (response.status === 200) {
+        setAllContacts(response.data.contacts);
+        return response.data.contacts;
+      }
+      return [];
+    } catch (error) {
+      console.log("Error fetching all contacts", error);
+      return [];
+    }
+  };
+
   const getAllContacts = async (page = 1) => {
     try {
       setIsLoading(true);
@@ -48,9 +96,6 @@ const Users = () => {
         console.log(response.data);
         setContacts(response.data.contacts);
         setPagination(response.data.pagination);
-        if (response.data.stats) {
-          setContactStats(response.data.stats);
-        }
       }
     } catch (error) {
       console.log("Error fetching contacts", error);
@@ -59,6 +104,19 @@ const Users = () => {
       setIsLoading(false);
     }
   };
+
+  // Initialize - fetch all contacts for filtering stats
+  useEffect(() => {
+    fetchAllContacts();
+  }, []);
+
+  // Update stats whenever filter changes
+  useEffect(() => {
+    if (allContacts.length > 0) {
+      const newStats = calculateFilteredStats(allContacts, debouncedFilter);
+      setContactStats(newStats);
+    }
+  }, [allContacts, debouncedFilter]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -91,6 +149,7 @@ const Users = () => {
 
   const handleUploadSuccess = (data) => {
     setShowUploadModal(false);
+    fetchAllContacts(); // Refresh all contacts for filtering
     getAllContacts();
     toast.success(`Added ${data.totalNewContacts} new contacts`);
   };
@@ -129,6 +188,7 @@ const Users = () => {
         toast.success("Contact added successfully");
         setNewContact({ firstName: "", lastName: "", phoneNumber: "" });
         setShowAddContactModal(false);
+        fetchAllContacts(); // Refresh all contacts for filtering
         getAllContacts(1);
       }
     } catch (error) {
@@ -301,9 +361,11 @@ const Users = () => {
                   className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 gap-3"
                 >
                   <div className="flex items-center space-x-3 sm:space-x-4 w-full sm:w-auto">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg flex-shrink-0">
-                      {contact.firstName.charAt(0).toUpperCase()}
-                    </div>
+                    <Avatar 
+                      name={`${contact.firstName} ${contact.lastName}`}
+                      size="md"
+                      gradient="blue"
+                    />
                     <div className="flex-1 sm:flex-none">
                       <p className="font-semibold text-gray-900 text-sm sm:text-base">
                         {contact.firstName} {contact.lastName}
@@ -444,7 +506,7 @@ const Users = () => {
 
       {/* Add Contact Modal */}
       {showAddContactModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-white/20 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4">
             <div className="text-center mb-6">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">

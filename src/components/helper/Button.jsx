@@ -3,7 +3,7 @@ const Button = ({ label, onClick, disabled, loading }) => {
     <button
       onClick={onClick}
       type="button"
-      className="flex items-center justify-center w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 disabled:opacity-50 cursor-pointer"
+      className={`flex items-center justify-center w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 disabled:opacity-50 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       disabled={disabled}
     >
       {loading && (

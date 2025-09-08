@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { baseURL } from "../helper";
 
 const defaultSignInData = {
-  username: "",
+  email: "",
   password: "",
 };
 
@@ -35,17 +35,17 @@ const SignIn = () => {
     setLoading(true);
 
     try {
-      if (!signinData.username || !signinData.password) {
+      if (!signinData.email || !signinData.password) {
         toast.warn("Please fill all the fields");
         return;
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signinData.username)) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signinData.email)) {
         toast.warn("Please enter a valid email address");
         return;
       }
 
       const response = await axios.post(`${baseURL}/users/signin`, signinData);
-      if (response.status !== 201) {
+      if (response.status !== 200) {
         toast.error("Error while signing in");
         return;
       }
@@ -105,8 +105,8 @@ const SignIn = () => {
               </label>
               <input
                 type="email"
-                name="username"
-                value={signinData.username}
+                name="email"
+                value={signinData.email}
                 onChange={handleChange}
                 placeholder="johndoe@gmail.com"
                 disabled={loading}

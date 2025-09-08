@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { baseURL, getHeaders } from "../helper";
 import axios from "axios";
+import { parseServerBalance, formatBalance, formatBalanceAfterDeduction } from "../utils/balanceUtils";
+import Avatar from "./helper/Avatar";
 
 const Send = () => {
   const [searchParams] = useSearchParams();
@@ -12,6 +14,7 @@ const Send = () => {
   const [amount, setAmount] = useState("");
   const [currBalance, setCurrBalance] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const headers = getHeaders(localStorage.getItem("token"));
   const navigate = useNavigate();
 
@@ -21,7 +24,7 @@ const Send = () => {
       if (response.status !== 200) {
         toast.error("Error in fetching your current balance");
       }
-      setCurrBalance(response.data.balance);
+      setCurrBalance(parseServerBalance(response.data.balance));
     } catch (error) {
       console.log("Error while fetching balance", error);
     }
@@ -29,19 +32,26 @@ const Send = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      if (!amount || parseFloat(amount) <= 0) {
-        toast.warn("Please enter a valid amount");
-        setLoading(false);
-        return;
-      }
-      if (parseFloat(amount) > currBalance) {
-        toast.warn("Insufficient Balance");
-        setLoading(false);
-        return;
-      }
+    
+    // Validate input first
+    if (!amount || parseFloat(amount) <= 0) {
+      toast.warn("Please enter a valid amount");
+      return;
+    }
+    if (parseFloat(amount) > currBalance) {
+      toast.warn("Insufficient Balance");
+      return;
+    }
 
+    // Show confirmation modal
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmTransfer = async () => {
+    setLoading(true);
+    setShowConfirmModal(false);
+    
+    try {
       const response = await axios.post(
         `${baseURL}/accounts/transfer`,
         {
@@ -107,15 +117,18 @@ const Send = () => {
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
             <h2 className="text-2xl font-bold mb-2">Send Money</h2>
             <p className="text-blue-100">
-              Available Balance: ${currBalance.toFixed(2)}
+              Available Balance: ${formatBalance(currBalance)}
             </p>
           </div>
 
           <div className="p-8">
             <div className="flex items-center mb-6 pb-6 border-b border-gray-200">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
-                {name.charAt(0)?.toUpperCase()}
-              </div>
+              <Avatar 
+                name={name} 
+                size="lg" 
+                gradient="green"
+                className="mr-4"
+              />
               <div>
                 <p className="text-sm text-gray-500">Sending to</p>
                 <h3 className="text-xl font-semibold text-gray-900">{name}</h3>
@@ -147,8 +160,7 @@ const Send = () => {
                 </div>
                 {amount && parseFloat(amount) > 0 && (
                   <p className="mt-2 text-sm text-gray-600">
-                    Remaining balance: $
-                    {(currBalance - parseFloat(amount)).toFixed(2)}
+                    Remaining balance: ${formatBalanceAfterDeduction(currBalance, parseFloat(amount))}
                   </p>
                 )}
               </div>
@@ -220,6 +232,80 @@ const Send = () => {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-white/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 relative">
+            {/* Close button */}
+            <button
+              onClick={() => setShowConfirmModal(false)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+              disabled={loading}
+            >
+              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 mb-4">
+                <svg className="h-8 w-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 15.5C3.498 16.333 4.46 18 6 18z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Confirm Transfer</h3>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to send <span className="font-bold text-green-600">${amount}</span> to <span className="font-bold">{name}</span>?
+              </p>
+              
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-600">Amount:</span>
+                  <span className="font-semibold text-gray-900">${amount}</span>
+                </div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-600">Recipient:</span>
+                  <span className="font-semibold text-gray-900">{name}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Remaining Balance:</span>
+                  <span className="font-semibold text-gray-900">
+                    ${formatBalanceAfterDeduction(currBalance, parseFloat(amount))}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="flex-1 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors cursor-pointer"
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmTransfer}
+                  disabled={loading}
+                  className="flex-1 px-4 py-3 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Sending...
+                    </span>
+                  ) : (
+                    'Confirm Transfer'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -8,7 +8,7 @@ import { useAuth } from "../context/AuthContext";
 const defaultSignupData = {
   firstName: "",
   lastName: "",
-  username: "",
+  email: "",
   password: "",
   phone: "",
 };
@@ -35,7 +35,7 @@ const SignUp = () => {
       if (
         !signupData.firstName ||
         !signupData.lastName ||
-        !signupData.username ||
+        !signupData.email ||
         !signupData.password ||
         !signupData.phone
       ) {
@@ -48,7 +48,7 @@ const SignUp = () => {
         );
         return;
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signupData.username)) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signupData.email)) {
         toast.warn("Please enter a valid email address");
         return;
       }
@@ -67,11 +67,11 @@ const SignUp = () => {
         return;
       }
 
-      const { token, user } = response.data;
-      login(token, user);
-      toast.success("Sign up successful");
+      const { message, user } = response.data;
+      toast.success(message);
       setSignupData(defaultSignupData);
-      navigate("/dashboard");
+      // Redirect to email verification page with user email
+      navigate("/verify-email", { state: { email: user.email, userId: user.id } });
     } catch (error) {
       toast.error("Error while signing up");
       console.error("Sign up error:", error);
@@ -146,8 +146,8 @@ const SignUp = () => {
               </label>
               <input
                 type="email"
-                name="username"
-                value={signupData.username}
+                name="email"
+                value={signupData.email}
                 onChange={handleChange}
                 placeholder="johndoe@gmail.com"
                 disabled={loading}

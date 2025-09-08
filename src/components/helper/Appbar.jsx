@@ -4,8 +4,10 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { baseURL, getHeaders } from "../../helper";
+import Avatar from "./Avatar";
+import NotificationBell from "./NotificationBell";
 
-const Appbar = () => {
+const Appbar = ({ isConnected, notifications, clearNotifications }) => {
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -95,9 +97,16 @@ const Appbar = () => {
         </div>
 
         <div className="flex items-center space-x-3">
+          {/* Notification Bell */}
+          <NotificationBell 
+            isConnected={isConnected}
+            notifications={notifications}
+            clearNotifications={clearNotifications}
+          />
+
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+            className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileMenuOpen ? (
@@ -114,9 +123,12 @@ const Appbar = () => {
               onClick={() => setDropdownOpen((prev) => !prev)}
             >
               <span className="font-medium text-gray-700 hidden sm:inline">Hello, {user.firstName}</span>
-              <div className="h-8 w-8 sm:h-9 sm:w-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold shadow-sm text-sm sm:text-base">
-                {user.firstName.charAt(0).toUpperCase()}
-              </div>
+              <Avatar 
+                name={`${user.firstName} ${user.lastName || ''}`}
+                size="sm"
+                gradient="indigo"
+                className="shadow-sm"
+              />
               <svg 
                 className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} 
                 fill="none" 
@@ -204,7 +216,7 @@ const Appbar = () => {
 
       {/* Delete Account Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-white/20 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4">
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">

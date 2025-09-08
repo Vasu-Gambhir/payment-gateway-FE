@@ -1,17 +1,19 @@
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import Avatar from "./Avatar";
 
 const User = ({ user }) => {
   const navigate = useNavigate();
   return (
     <div className="flex justify-between mt-2">
-      <div className="flex">
-        <div className="rounded-full h-12 w-12 bg-slate-200 flex justify-center mt-1 mr-2">
-          <div className="flex flex-col justify-center h-full text-xl">
-            {user.firstName.charAt(0).toUpperCase()}
-          </div>
-        </div>
-        <div className="flex flex-col justify-center h-full font-semibold">
+      <div className="flex items-center">
+        <Avatar 
+          name={`${user.firstName} ${user.lastName}`}
+          size="md"
+          gradient="blue"
+          className="mr-2"
+        />
+        <div className="flex flex-col justify-center font-semibold">
           <div>
             {user.firstName} {user.lastName}
           </div>
